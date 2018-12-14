@@ -1,10 +1,11 @@
 {
   "name": "dota-app",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "An app to help you make better hero and item selections in DOTA 2",
+  "main": "src/server.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node src/server.js",
+    "test": "export NODE_ENV && jasmine",
     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
   },
   "keywords": [],
@@ -12,5 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.16.4"
+  },
+  "devDependencies": {
+    "jasmin": "0.0.2",
+    "request": "^2.88.0"
   }
 }
