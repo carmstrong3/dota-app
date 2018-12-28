@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
     roles: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: "http://cdn.dota2.com/apps/dota2/images/heroes/antimage_full.png"
     }
   }, {});
 

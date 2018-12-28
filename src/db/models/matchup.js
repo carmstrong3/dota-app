@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     heroId: {
       type: DataTypes.INTEGER,
       onDelete: "CASCADE",
+      unique: true,
       references: {
         model: "Heros", 
         key: "id", 
@@ -27,10 +28,10 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
 
     // set relationship between matchup and hero where matchup belongs to hero
-    Matchup.belongsTo(models.Hero, {
+/*    Matchup.belongsTo(models.Hero, {
       foreignKey: "heroId",
       onDelete: "CASCADE",
-    });
+    }); */
   };
   return Matchup;
 };
