@@ -39,7 +39,9 @@ class App extends Component {
 
   // Calculate the win percentage of the teams given the current picks
   getWinPercentage = () => {
-
+    let radiant = this.state.radiant;
+    let dire = this.state.dire;
+    let bans = this.state.bans;
   }
 
   // Functionality to add hero
