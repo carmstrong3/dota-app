@@ -19,14 +19,16 @@ class Teams extends Component {
           <div id="radiant">
             <h2>Radiant</h2>
             {this.props.radiant ? (
+              <div>
               {this.props.radiant.map((hero) => {
                 return(
-                  <div>
+	          <div>
                     <p>{hero.localized_name}</p>
-                    <img src={hero.image} alt="radiant hero">
-                  </div>
+                    <img src={hero.image} alt="radiant hero"/>
+		  </div>
                 );
-              })}
+	      })}
+	      </div>
             ) : (
               <div>
                 <p>No hero selected yet</p>
@@ -37,10 +39,42 @@ class Teams extends Component {
            
         </div>
         <div id="dire">
-
+          <h2>Dire</h2>
+            {this.props.dire ? (
+              <div>
+              {this.props.dire.map((hero) => {
+                return(
+	          <div>
+                    <p>{hero.localized_name}</p>
+                    <img src={hero.image} alt="dire hero"/>
+		  </div>
+                );
+	      })}
+	      </div>
+            ) : (
+              <div>
+                <p>No hero selected yet</p>
+              </div>
+            )}           
         </div> 
         <div id="bans">
-
+          <h2>Bans</h2>
+            {this.props.bans ? (
+              <div>
+              {this.props.bans.map((hero) => {
+                return(
+	          <div>
+                    <p>{hero.localized_name}</p>
+                    <img src={hero.image} alt="banned hero"/>
+		  </div>
+                );
+	      })}
+	      </div>
+            ) : (
+              <div>
+                <p>No hero selected yet</p>
+              </div>
+            )} 
         </div>
       </div>
       </div>

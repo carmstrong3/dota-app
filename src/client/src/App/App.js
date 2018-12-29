@@ -9,12 +9,14 @@ import Teams from './pages/teams/Teams';
 class App extends Component {
   constructor(props) {
     super(props);
+    this.addHeroRadiant = this.addHeroRadiant.bind(this);
+    this.addHeroRadiant = this.addHeroRadiant.bind(this);
     this.state = {
       heroes: [],
       radiant: [],
       dire: [],
       bans: []
-    }
+   }
   }
 
   // Fetch the heroes on first mount
@@ -42,19 +44,69 @@ class App extends Component {
 
   // Functionality to add hero
   addHeroToTeam = (hero) => {
-    let radiant = this.radiant;
-    let dire = this.dire;
-    let bans = this.bans;
+    let radiant = this.state.radiant;
+    let dire = this.state.dire;
+    let bans = this.state.bans;
     
     return radiant.indexOf(hero) !== -1 
-      ? dire.push(hero) & radiant.splice(radiant.indexOf(hero), 1)
+      ? this.setState({dire: dire.push(hero)}) && this.setState({radiant: radiant.splice(radiant.indexOf(hero), 1)})
       : (dire.indexOf(hero) !== -1
-      ? bans.push(hero) & dire.splice(dire.indexOf(hero), 1)
+      ? this.setState({bans: bans.push(hero)}) && this.setState({dire: dire.splice(dire.indexOf(hero), 1)})
       : ((bans.indexOf(hero) !== -1)
-      ? bans.splice(bans.indexOf(hero), 1)
-      : radiant.push(hero))) 
+      ? this.setState({bans: bans.splice(bans.indexOf(hero), 1)})
+      : this.setState({radiant: radiant.push(hero)}))) 
   }
 
+	
+  // add hero selection handler
+  addHeroRadiant = (hero) => { 
+    let radiant = this.state.radiant;
+    let newRadiant = radiant.concat(hero);
+    this.setState({radiant: newRadiant})
+  }
+  
+  // remove hero selection handler
+  removeHeroRadiant = (hero) => {
+    let radiant = this.state.radiant;
+    console.log(radiant);
+    let index = radiant.indexOf(hero);
+    console.log(index);
+    let newState = radiant.splice(index, 1);
+    console.log(newState);
+    console.log(radiant.indexOf(hero) === 0);
+    console.log(radiant.indexOf(hero) === -1);
+    this.setState({radiant: newState})
+  }
+
+  // add hero selection handler
+  addHeroDire = (hero) => { 
+    let dire = this.state.dire;
+    let newDire = dire.concat(hero);
+    this.setState({dire: newDire})
+  }
+  
+  // remove hero selection handler
+  removeHeroDire = (hero) => {
+    let dire = this.state.dire;
+    let index = dire.indexOf(hero);
+    let newState = dire.splice(index, 1);
+    this.setState({dire: newState})
+  }
+
+  // add hero selection handler
+  addHeroBans = (hero) => { 
+    let bans = this.state.bans;
+    let newBans = bans.concat(hero);
+    this.setState({bans: newBans})
+  }
+  
+  // remove hero selection handler
+  removeHeroBans = (hero) => {
+    let bans = this.state.bans;
+    let index = bans.indexOf(hero);
+    let newState = bans.splice(index, 1);
+    this.setState({bans: newState})
+  }
 
   render() {
     const App = () => (
@@ -68,8 +120,8 @@ class App extends Component {
     ) 
     return (
       <div>
-        <Teams addHeroToTeam = {this.addHeroToTeam} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
-        <HeroesList heroes={this.state.heroes} addHeroToTeam = {this.addHeroToTeam}/>
+        <Teams addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
+        <HeroesList addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} addHeroToTeam = {this.addHeroToTeam} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
         <App/>
       </div>
    );

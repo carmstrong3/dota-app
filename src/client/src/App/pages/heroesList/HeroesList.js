@@ -23,7 +23,23 @@ class HeroesList extends Component {
     }
   }
   
+  toggleRadiantButton(hero) {
+    return this.props.radiant.indexOf(hero) !== -1
+      ? (<button type="button" onClick={(e) => this.props.removeHeroRadiant(hero)}>Remove Radiant</button>)
+      : (<button type="button" onClick={(e) => this.props.addHeroRadiant(hero)}>Radiant</button>)
+  }
 
+  toggleDireButton(hero) {
+    return this.props.dire.indexOf(hero) !== -1
+      ? (<button type="button" onClick={(e) => this.props.removeHeroDire(hero)}>Remove Dire</button>)
+      : (<button type="button" onClick={(e) => this.props.addHeroDire(hero)}>Dire</button>)
+  }
+
+  toggleBansButton(hero) {
+    return this.props.bans.indexOf(hero) !== -1
+      ? (<button type="button" onClick={(e) => this.props.removeHeroBans(hero)}>Remove Ban</button>)
+      : (<button type="button" onClick={(e) => this.props.addHeroBans(hero)}>Bans</button>)
+  }
 
   render() {
 
@@ -31,16 +47,19 @@ class HeroesList extends Component {
       <div className="App">
         <div className="HeroesList">
           <h1>List of Heroes</h1>
-          <input type="text" id="heroesSearchbar" onkeyup="{() => this.filterHeroes()}" placeholder="Enter Hero Name" title="Enter name here"/>
+          <input type="text" id="heroesSearchbar" onKeyUp={() => this.filterHeroes()} placeholder="Enter Hero Name" title="Enter name here"/>
           {/* Check to see if any heroes are found*/}
           {this.props.heroes ? (
             <ul id="unorderedHeroesList">
               {/*Render the list of heroes */}
               {this.props.heroes.map((hero) => {
                return(
-                  <li onClick="{() => addHeroToTeam()}">
+                  <li>
                     <p>{hero.localized_name}</p>
                     <img src={hero.image} alt="hero"/>
+                    {this.toggleRadiantButton(hero)}
+                    {this.toggleDireButton(hero)}
+                    {this.toggleBansButton(hero)}                     
                   </li>
                 );
               })}
