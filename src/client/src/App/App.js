@@ -85,7 +85,6 @@ class App extends Component {
    
     const getDireWinrate = (callback) => {
       if (dire.length === 0) {
-        console.log("dire team is empty")
       }
       for(let i=0; i < dire.length; i++) {
         getHeroWinrates(dire[i], radiant, direWinrateCopy);
@@ -108,14 +107,23 @@ class App extends Component {
      
   }
 
-  showRadiantWinrate = () => {
-    let copy = [...this.state.radiantWinrate];
-    let sum = (acc, val) => acc + val;
-    let answer = copy.reduce(sum)
-    return answer
+  getRadiantPoints(){
+    console.log("called getRadiantWinrate");
+    let toPoints = (array) => {
+      if (array.length === 0) {
+        return 0
+      } else {
+        let count = array[0];
+        for (let i=1; i < array.length; i++) {
+          count += array[i];
+        };
+        return count/array.length
+      }
+    }
+    return toPoints(this.state.radiantWinrate)
   }
-
-
+   
+     
   // add hero selection handler
   addHeroRadiant = (hero) => { 
     let radiant = this.state.radiant;
@@ -161,7 +169,7 @@ class App extends Component {
   render() {
     return (
       <div> 
-        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate}/>
+        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getRadiantPoints = {this.getRadiantPoints}/>
         <Teams getWinPercentage = {this.getWinPercentage} removeHeroBans = {this.removeHeroBans} removeHeroDire = {this.removeHeroDire} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
         <HeroesList getWinPercentage = {this.getWinPercentage} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
       </div>
