@@ -1,21 +1,26 @@
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
 import './App.css';
-import Home from './pages/home/Home';
-import List from './pages/list/List';
 import HeroesList from './pages/heroesList/HeroesList';
 import Teams from './pages/teams/Teams';
+import WinCalc from './pages/winCalc/WinCalc';
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.addHeroRadiant = this.addHeroRadiant.bind(this);
-    this.addHeroRadiant = this.addHeroRadiant.bind(this);
+    this.removeHeroRadiant = this.removeHeroRadiant.bind(this);
+    this.addHeroDire = this.addHeroDire.bind(this);
+    this.removeHeroDire = this.removeHeroDire.bind(this);
+    this.addHeroBans = this.addHeroBans.bind(this);
+    this.removeHeroBans = this.removeHeroBans.bind(this);
+
     this.state = {
       heroes: [],
       radiant: [],
       dire: [],
-      bans: []
+      bans: [],
+      radiantWinrate: [],
+      direWinrate: []
    }
   }
 
@@ -31,67 +36,111 @@ class App extends Component {
     .then(res => res.json())
     .then(heroes => this.setState({ heroes }))
   }
-  
-  // update win percentage on update
-  componentDidUpdate() {
-    this.getWinPercentage();
-  }
-
+ 
   // Calculate the win percentage of the teams given the current picks
   getWinPercentage = () => {
     let radiant = this.state.radiant;
     let dire = this.state.dire;
-    let bans = this.state.bans;
+    let radiantWinrateCopy = [];
+    let direWinrateCopy = [];
+
+
+    const heroMatchupVsAll = (heroId, teamWinrate) => {
+      fetch(`api/heroes/${heroId}/matchups`)
+      .then(res => res.json())
+      .then(response => {
+        for(let i=0; i < response.length; i++) {
+          teamWinrate.push(response[i].wins/response[i].games_played)
+        };
+      })
+      .catch((err) => console.log(err));
+    };
+ 
+    const heroMatchupVsOne = (heroId, matchupId, teamWinrate) => {
+      fetch(`api/heroes/${heroId}/matchups/${matchupId}`)
+      .then(res => res.json())
+      .then(response => teamWinrate.push(response[0].wins/response[0].games_played))
+      .catch((err) => console.log(err));
+    };
+
+    const getHeroWinrates = (hero, enemyTeam, teamWinrate) => {
+      if (enemyTeam === null || undefined || enemyTeam.length === 0) {
+        heroMatchupVsAll(hero.hero_id, teamWinrate)
+      } else {
+        for(let j=0; j < enemyTeam.length; j++) {
+          heroMatchupVsOne(hero.hero_id, enemyTeam[j].hero_id, teamWinrate); 
+        } 
+      }
+    };
+
+    const getRadiantWinrate = (callback) => {
+      if (radiant.length === 0) {
+        console.log("radiant team is empty")
+      }
+      for(let i=0; i < radiant.length; i++) {
+        getHeroWinrates(radiant[i], dire, radiantWinrateCopy);
+      };
+      callback()
+    };
+   
+    const getDireWinrate = (callback) => {
+      if (dire.length === 0) {
+        console.log("dire team is empty")
+      }
+      for(let i=0; i < dire.length; i++) {
+        getHeroWinrates(dire[i], radiant, direWinrateCopy);
+      };
+      callback()
+    };
+
+    let setRadiant = () => {
+      console.log("setRadiant called");
+      this.setState({radiantWinrate: radiantWinrateCopy}, () => console.log(this.state.radiantWinrate));
+    };
+
+    let setDire = () => {
+      console.log("setDire called");
+      this.setState({direWinrate: direWinrateCopy}, () => console.log(this.state.direWinrate));
+    };
+
+    getRadiantWinrate(setRadiant);
+    getDireWinrate(setDire);
+     
   }
 
-  // Functionality to add hero
-  addHeroToTeam = (hero) => {
-    let radiant = this.state.radiant;
-    let dire = this.state.dire;
-    let bans = this.state.bans;
-    
-    return radiant.indexOf(hero) !== -1 
-      ? this.setState({dire: dire.push(hero)}) && this.setState({radiant: radiant.splice(radiant.indexOf(hero), 1)})
-      : (dire.indexOf(hero) !== -1
-      ? this.setState({bans: bans.push(hero)}) && this.setState({dire: dire.splice(dire.indexOf(hero), 1)})
-      : ((bans.indexOf(hero) !== -1)
-      ? this.setState({bans: bans.splice(bans.indexOf(hero), 1)})
-      : this.setState({radiant: radiant.push(hero)}))) 
+  showRadiantWinrate = () => {
+    let copy = [...this.state.radiantWinrate];
+    let sum = (acc, val) => acc + val;
+    let answer = copy.reduce(sum)
+    return answer
   }
 
-	
+
   // add hero selection handler
   addHeroRadiant = (hero) => { 
     let radiant = this.state.radiant;
     let newRadiant = radiant.concat(hero);
-    this.setState({radiant: newRadiant})
+    this.setState({radiant: newRadiant}, this.getWinPercentage)
   }
   
   // remove hero selection handler
   removeHeroRadiant = (hero) => {
     let radiant = this.state.radiant;
-    console.log(radiant);
-    let index = radiant.indexOf(hero);
-    console.log(index);
-    let newState = radiant.splice(index, 1);
-    console.log(newState);
-    console.log(radiant.indexOf(hero) === 0);
-    console.log(radiant.indexOf(hero) === -1);
-    this.setState({radiant: newState})
+    let newState = radiant.filter((radiantTeam) => radiantTeam.id !== hero.id);
+    this.setState({radiant: newState}, this.getWinPercentage)
   }
 
   // add hero selection handler
   addHeroDire = (hero) => { 
     let dire = this.state.dire;
     let newDire = dire.concat(hero);
-    this.setState({dire: newDire})
+    this.setState({dire: newDire}, this.getWinPercentage)
   }
   
   // remove hero selection handler
   removeHeroDire = (hero) => {
     let dire = this.state.dire;
-    let index = dire.indexOf(hero);
-    let newState = dire.splice(index, 1);
+    let newState = dire.filter((direTeam) => direTeam.id !== hero.id);
     this.setState({dire: newState})
   }
 
@@ -105,26 +154,16 @@ class App extends Component {
   // remove hero selection handler
   removeHeroBans = (hero) => {
     let bans = this.state.bans;
-    let index = bans.indexOf(hero);
-    let newState = bans.splice(index, 1);
+    let newState = bans.filter(bansList => bansList.id !== hero.id);
     this.setState({bans: newState})
   }
 
   render() {
-    const App = () => (
-      <div>
-        <Switch>
-          <Route exact path='/' component={Home}/>
-          <Route path='/list' component={List}/>
-          <Route path='/heroesList' component={HeroesList} heroes={this.state.heroes}/>
-        </Switch>
-      </div>
-    ) 
     return (
-      <div>
-        <Teams addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
-        <HeroesList addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} addHeroToTeam = {this.addHeroToTeam} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
-        <App/>
+      <div> 
+        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate}/>
+        <Teams getWinPercentage = {this.getWinPercentage} removeHeroBans = {this.removeHeroBans} removeHeroDire = {this.removeHeroDire} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
+        <HeroesList getWinPercentage = {this.getWinPercentage} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
       </div>
    );
     

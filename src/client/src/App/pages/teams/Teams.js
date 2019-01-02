@@ -1,16 +1,31 @@
 import React, {Component} from 'react';
 
 class Teams extends Component {
-
-  componentDidUpdate() {
-    this.getWinPercentages();
+  constructor(props) {
+    super(props);
+    this.state = {
+      radiantTeam: [],
+      direTeam: [],
+      bansList: []
+    }
+  }
+ 
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (prevState.radiantTeam !== nextProps.radiant) {
+      return {
+        radiant: nextProps.radiant,
+        radiantTeam: nextProps.radiant
+      }
+    } else return null
   }
 
-  getWinPercentages = () => {
-   
+  toggleBansButton(hero) {
+    return this.props.bans.indexOf(hero) !== -1
+      ? (<button type="button" onClick={(e) => this.props.removeHeroBans(hero)}>Remove Ban</button>)
+      : (<button type="button" onClick={(e) => this.props.addHeroBans(hero)}>Bans</button>)
   }
 
-  
+ 
   render() {
     
     return (
@@ -18,13 +33,14 @@ class Teams extends Component {
         <div id="teams container">
           <div id="radiant">
             <h2>Radiant</h2>
-            {this.props.radiant ? (
+            {this.state.radiantTeam ? (
               <div>
-              {this.props.radiant.map((hero) => {
+              {this.state.radiantTeam.map((hero) => {
                 return(
-	          <div>
+	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
                     <img src={hero.image} alt="radiant hero"/>
+                    
 		  </div>
                 );
 	      })}
@@ -44,7 +60,7 @@ class Teams extends Component {
               <div>
               {this.props.dire.map((hero) => {
                 return(
-	          <div>
+	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
                     <img src={hero.image} alt="dire hero"/>
 		  </div>
@@ -63,9 +79,10 @@ class Teams extends Component {
               <div>
               {this.props.bans.map((hero) => {
                 return(
-	          <div>
+	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
                     <img src={hero.image} alt="banned hero"/>
+                    {this.toggleBansButton(hero)}
 		  </div>
                 );
 	      })}

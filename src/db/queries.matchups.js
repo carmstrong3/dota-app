@@ -31,7 +31,7 @@ module.exports = {
 
   // define function to return a specific matchup
   getMatchup(hero_id, matchupId, callback){
-    return Matchup.findOne({
+    return Matchup.findAll({
       where: 
         {heroId: hero_id, 
         matchup_id: matchupId}
@@ -42,5 +42,21 @@ module.exports = {
     .catch((err) => {
       callback(err);
     })
-  },  
+  },
+
+  // define function to return all matchups for one hero
+  getHeroMatchups(hero_id, callback) { 
+    return Matchup.findAll({
+      where: {
+        heroId: hero_id
+      }
+    })
+    .then((matchup) => {
+      callback(null, matchup);
+    })
+    .catch((err) => {
+      callback(err);
+    })
+  },
+  
 }

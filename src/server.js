@@ -7,32 +7,16 @@ const heroQueries = require("./db/queries.heroes.js");
 const matchupQueries = require("./db/queries.matchups.js");
 const itemQueries = require("./db/queries.items.js");
 
+
+const port = process.env.PORT || 5000;
+app.listen(port);
+
 // An api endpoint that returns a short list of items
 app.get('/api/getList', (req,res) => {
   var list = ["item1", "item2", "item3"];
   res.json(list);
   console.log('Sent list of items');
 });
-
-/* saving this implementation for posterity
-// An api endpoint that returns a list of all heroes in the game 
-app.get('/api/heroes', (req,res) => {
-  var heroes = new EventEmitter();
-  var list;
-  request('https://api.opendota.com/api/heroes', (err, res, body) => {
-    if (!err && res.statusCode == 200) {
-      heroes.list = JSON.parse(body);
-      heroes.emit('update');
-    }
-  });
-
-  heroes.on('update', () => {
-    list = heroes.list;
-    res.json(list);
-  });
-});
- 
-*/
 
 // An api endpoint that returns a list of all heroes in the database 
 app.get('/api/heroes', (req,res) => {
@@ -45,16 +29,8 @@ app.get('/api/heroes', (req,res) => {
   });
 });
 
-/* saving for posterity
-// An api endpoint that returns a list of all matchups for a hero in the game 
-app.get('/api/heroes/matchups', (req,res) => {
-
-});
-
-*/
-
 // An page to update database 
-app.get('/update', (req,res) => {
+app.get('/update/heroes', (req,res) => {
   var heroes = [];
   
   res.send("updating");
@@ -89,7 +65,7 @@ app.get('/update', (req,res) => {
 });
 
 // An page to update database's list of hero matchups 
-app.get('/update/matchups/1', (req,res) => {
+app.get(`/update/matchups/:id`, (req,res) => {
 
 // Set a basic text response on the page  
   res.send("updating");
@@ -133,60 +109,11 @@ app.get('/update/matchups/1', (req,res) => {
     }); 
   };
 
-  getMatchups(1);
+  getMatchups(req.params.id);
 
 });
 
-// An page to update database's list of hero matchups page 2 
-app.get('/update/matchups/2', (req,res) => {
-
-// Set a basic text response on the page  
-  res.send("updating");
-
-// recursive function
-  const getMatchups = (id) => {
-    return request(`https://api.opendota.com/api/heroes/${id}/matchups`, (err, res, body) => {
-      if (!err && res.statusCode == 200) {
-        let data = JSON.parse(body);
-        let matchups = [];
-        for(let j=0; j< data.length; j++){
-          matchups.push(data[j]);
-          var newMatchup = {
-            matchup_id: matchups[j].hero_id,
-            games_played: matchups[j].games_played,
-            wins: matchups[j].wins,
-            heroId: id,
-          };
-          matchupQueries.addMatchup(newMatchup, (err, matchup) => {
-            if(err){
-              console.log("query error: " + err)
-            } else {
-              console.log("filed")
-            }
-          });
-        };
-      } else {
-        console.log("error: " +  err);
-      };
-    })
-    .then(() => {
-      id += 1;
-      if (id < 122) {
-        return getMatchups(id);
-      } else {
-        return
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    }); 
-  };
-
-  getMatchups(121);
-
-});
-
-/// A page to update database's list of hero itemTimings page 1 
+// A page to update database's list of hero itemTimings page 1 
 app.get('/update/items/1', (req,res) => {
 
 // Set a basic text response on the page  
@@ -227,40 +154,62 @@ app.get('/update/items/1', (req,res) => {
   };
 });
 
-// A page to compare the winrates of two teams
-app.get('/api/team/winrate', (req, res) => {
-  res.send("hello");
 
-// set team objects
-  let teams = {
-    radiant: {
-      player1: {hero_id: ''}, 
-      player2: {hero_id: ''},
-      player3: {hero_id: ''},
-      player4: {hero_id: ''},
-      player5: {hero_id: ''},
-      synergy: (player1, player2, player3, player4, player5) => {},
-      winrate: (player1, player2, player3, player4, player5, dire) => {},
-    },
-    dire: {
-      player1: {hero_id: ''}, 
-      player2: {hero_id: ''},
-      player3: {hero_id: ''},
-      player4: {hero_id: ''},
-      player5: {hero_id: ''},
-      synergy: (player1, player2, player3, player4, player5) => {},
-      winrate: (player1, player2, player3, player4, player5) => {},
+// An page to update database's list of hero matchups 
+app.get(`/api/heroes/matchups`, (req,res) => {
+
+// Set a basic text response on the page  
+  matchupQueries.getAllMatchups((err, matchups) => {
+    if(err){
+      console.log(err);
+    } else {
+      res.send(matchups)
     }
-  }   
+  });
+
+
 });
+
+// BEGIN HEROES/{ID}/MATCHUPS PAGES 
+
+// An page to update database's list of anti-mage matchups 
+app.get(`/api/heroes/:id/matchups`, (req,res) => {
+
+// Set a basic text response on the page  
+  matchupQueries.getHeroMatchups(req.params.id, (err, matchups) => {
+    if(err){
+      console.log(err);
+    } else {
+      res.send(matchups)
+    }
+  });
+});
+
+// END HEROES/{ID}/MATCHUPS PAGES 
+
+// BEGIN HEROES/{ID}/MATCHUPS/{MATCHUPID} PAGES
+
+
+app.get(`/api/heroes/:id/matchups/:matchupid`, (req,res) => {
+
+// Set a basic text response on the page  
+  matchupQueries.getMatchup(req.params.id, req.params.matchupid, (err, matchup) => {
+    if(err){
+      console.log(err);
+    } else {
+      console.log("no err");
+      res.send(matchup)
+    }
+  });
+});
+
+
+// END HEROES/{ID}/MATCHUPS/{MATCHUPID} PAGES
 
 
 // Handles any requests that don't match the ones above
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
-
-const port = process.env.PORT || 5000;
-app.listen(port);
 
 console.log('App is listening on port ' + port);

@@ -22,7 +22,7 @@ class HeroesList extends Component {
       }
     }
   }
-  
+
   toggleRadiantButton(hero) {
     return this.props.radiant.indexOf(hero) !== -1
       ? (<button type="button" onClick={(e) => this.props.removeHeroRadiant(hero)}>Remove Radiant</button>)
@@ -54,7 +54,7 @@ class HeroesList extends Component {
               {/*Render the list of heroes */}
               {this.props.heroes.map((hero) => {
                return(
-                  <li>
+                  <li key={hero.id}>
                     <p>{hero.localized_name}</p>
                     <img src={hero.image} alt="hero"/>
                     {this.toggleRadiantButton(hero)}
