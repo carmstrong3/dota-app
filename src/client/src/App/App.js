@@ -107,7 +107,9 @@ class App extends Component {
      
   }
 
-  getRadiantPoints(){
+  getRadiantPoints = () => {
+    let radiantWinrate = this.state.radiantWinrate;
+
     console.log("called getRadiantWinrate");
     let toPoints = (array) => {
       if (array.length === 0) {
@@ -120,10 +122,9 @@ class App extends Component {
         return count/array.length
       }
     }
-    return toPoints(this.state.radiantWinrate)
+    return toPoints(radiantWinrate)
   }
    
-     
   // add hero selection handler
   addHeroRadiant = (hero) => { 
     let radiant = this.state.radiant;

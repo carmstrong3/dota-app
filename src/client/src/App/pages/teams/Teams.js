@@ -1,23 +1,6 @@
 import React, {Component} from 'react';
 
 class Teams extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      radiantTeam: [],
-      direTeam: [],
-      bansList: []
-    }
-  }
- 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (prevState.radiantTeam !== nextProps.radiant) {
-      return {
-        radiant: nextProps.radiant,
-        radiantTeam: nextProps.radiant
-      }
-    } else return null
-  }
 
   toggleBansButton(hero) {
     return this.props.bans.indexOf(hero) !== -1
@@ -33,9 +16,9 @@ class Teams extends Component {
         <div id="teams container">
           <div id="radiant">
             <h2>Radiant</h2>
-            {this.state.radiantTeam ? (
+            {this.props.radiant ? (
               <div>
-              {this.state.radiantTeam.map((hero) => {
+              {this.props.radiant.map((hero) => {
                 return(
 	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
