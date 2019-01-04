@@ -14,6 +14,7 @@ class App extends Component {
     this.removeHeroDire = this.removeHeroDire.bind(this);
     this.addHeroBans = this.addHeroBans.bind(this);
     this.removeHeroBans = this.removeHeroBans.bind(this);
+    this.getWinPercentage = this.getWinPercentage.bind(this);
 
     this.state = {
       heroes: [],
@@ -44,8 +45,8 @@ class App extends Component {
   getWinPercentage = () => {
     let radiant = this.state.radiant;
     let dire = this.state.dire;
-    let radiantWinrateCopy = Object.assign({}, this.state.radiantWinrate);
-    let direWinrateCopy = Object.assign({}, this.state.radiantWinrate);
+    let radiantWinrateCopy = [];
+    let direWinrateCopy = [];
 
 
     const heroMatchupVsAll = (heroId, teamWinrate) => {
@@ -115,6 +116,7 @@ class App extends Component {
     if (winrate.length === 0) {
       return 0
     } else {
+      console.log(winrate);
       let count = winrate[0];
       for (let i=1; i < winrate.length; i++) {
         count += winrate[i];
