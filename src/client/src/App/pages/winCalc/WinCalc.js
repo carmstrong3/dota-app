@@ -2,7 +2,10 @@ import React, {Component} from 'react';
 
 class WinCalc extends Component {
   // Initialize the state
- 
+  constructor(props){
+    super(props);
+
+  } 
  
   render() {
     return(
@@ -12,7 +15,7 @@ class WinCalc extends Component {
           {this.props.radiantWinrate ? (
             <div>
             <p>winRate is</p>
-            {this.props.getRadiantPoints()}
+            {this.props.getPoints(this.props.radiantWinrate)}
             </div>
           ) : (
             <div>

@@ -4,6 +4,7 @@ import HeroesList from './pages/heroesList/HeroesList';
 import Teams from './pages/teams/Teams';
 import WinCalc from './pages/winCalc/WinCalc';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,9 @@ class App extends Component {
       dire: [],
       bans: [],
       radiantWinrate: [],
-      direWinrate: []
+      direWinrate: [],
+      radiantPoints: 0,
+      direPoints: 0,
    }
   }
 
@@ -41,8 +44,8 @@ class App extends Component {
   getWinPercentage = () => {
     let radiant = this.state.radiant;
     let dire = this.state.dire;
-    let radiantWinrateCopy = [];
-    let direWinrateCopy = [];
+    let radiantWinrateCopy = Object.assign({}, this.state.radiantWinrate);
+    let direWinrateCopy = Object.assign({}, this.state.radiantWinrate);
 
 
     const heroMatchupVsAll = (heroId, teamWinrate) => {
@@ -94,7 +97,7 @@ class App extends Component {
 
     let setRadiant = () => {
       console.log("setRadiant called");
-      this.setState({radiantWinrate: radiantWinrateCopy}, () => console.log(this.state.radiantWinrate));
+      this.setState({radiantWinrate: radiantWinrateCopy}, () => console.log(this.state.radiantWinrate))
     };
 
     let setDire = () => {
@@ -107,23 +110,19 @@ class App extends Component {
      
   }
 
-  getRadiantPoints = () => {
-    let radiantWinrate = this.state.radiantWinrate;
-
-    console.log("called getRadiantWinrate");
-    let toPoints = (array) => {
-      if (array.length === 0) {
-        return 0
-      } else {
-        let count = array[0];
-        for (let i=1; i < array.length; i++) {
-          count += array[i];
-        };
-        return count/array.length
-      }
+  getPoints = (winrate) => {
+    console.log("called getPoints");
+    if (winrate.length === 0) {
+      return 0
+    } else {
+      let count = winrate[0];
+      for (let i=1; i < winrate.length; i++) {
+        count += winrate[i];
+      };
+      return count/winrate.length
     }
-    return toPoints(radiantWinrate)
   }
+
    
   // add hero selection handler
   addHeroRadiant = (hero) => { 
@@ -170,7 +169,7 @@ class App extends Component {
   render() {
     return (
       <div> 
-        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getRadiantPoints = {this.getRadiantPoints}/>
+        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getPoints = {this.getPoints}/>
         <Teams getWinPercentage = {this.getWinPercentage} removeHeroBans = {this.removeHeroBans} removeHeroDire = {this.removeHeroDire} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
         <HeroesList getWinPercentage = {this.getWinPercentage} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
       </div>
