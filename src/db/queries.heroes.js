@@ -32,7 +32,9 @@ module.exports = {
   },
 
   getHero(id, callback){
-    return Hero.findById(id)
+    return Hero.findAll({
+      where: { hero_id: id}
+    })
     .then((hero) => {
       callback(null, hero)
     })

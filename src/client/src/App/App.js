@@ -3,7 +3,7 @@ import './App.css';
 import HeroesList from './pages/heroesList/HeroesList';
 import Teams from './pages/teams/Teams';
 import WinCalc from './pages/winCalc/WinCalc';
-
+import Picks from './pages/picks/Picks';
 
 class App extends Component {
   constructor(props) {
@@ -25,12 +25,28 @@ class App extends Component {
       direWinrate: [],
       radiantPoints: 0,
       direPoints: 0,
+      radiantTopPicks: [],
+      radiantBottomPicks: [],
+      direTopPicks: [],
+      direBottomPicks: [],
    }
   }
 
   // Fetch the heroes on first mount
   componentDidMount() {
     this.getHeroes();
+  }
+
+/* // Need to make this logic work better. Need it to prevent multiple calls to this.getPointsRadiant when deleting heroes back down to 1 hero while allowing for initial rendering.
+
+  shouldComponentUpdate(nextState){
+    return nextState.radiantPoints !== 0 && this.state.radiantPoints !== 0
+  }
+*/
+
+  componentDidUpdate() {
+    this.getPointsRadiant(this.state.radiantWinrate); 
+    this.getPointsDire(this.state.direWinrate);
   }
 
 
@@ -79,7 +95,6 @@ class App extends Component {
 
     const getRadiantWinrate = (callback) => {
       if (radiant.length === 0) {
-        console.log("radiant team is empty")
       }
       for(let i=0; i < radiant.length; i++) {
         getHeroWinrates(radiant[i], dire, radiantWinrateCopy);
@@ -97,12 +112,10 @@ class App extends Component {
     };
 
     let setRadiant = () => {
-      console.log("setRadiant called");
       this.setState({radiantWinrate: radiantWinrateCopy}, () => console.log(this.state.radiantWinrate))
     };
 
     let setDire = () => {
-      console.log("setDire called");
       this.setState({direWinrate: direWinrateCopy}, () => console.log(this.state.direWinrate));
     };
 
@@ -111,21 +124,33 @@ class App extends Component {
      
   }
 
-  getPoints = (winrate) => {
-    console.log("called getPoints");
+  getPointsRadiant = (winrate) => {
     if (winrate.length === 0) {
       return 0
     } else {
-      console.log(winrate);
       let count = winrate[0];
       for (let i=1; i < winrate.length; i++) {
         count += winrate[i];
       };
-      return count/winrate.length
+      let points = count/winrate.length
+      this.setState({radiantPoints: points});
     }
   }
 
-   
+   getPointsDire = (winrate) => {
+    if (winrate.length === 0) {
+      return 0
+    } else {
+      let count = winrate[0];
+      for (let i=1; i < winrate.length; i++) {
+        count += winrate[i];
+      };
+      let points = count/winrate.length
+      this.setState({direPoints: points});
+    }
+  }
+
+  
   // add hero selection handler
   addHeroRadiant = (hero) => { 
     let radiant = this.state.radiant;
@@ -144,7 +169,8 @@ class App extends Component {
   addHeroDire = (hero) => { 
     let dire = this.state.dire;
     let newDire = dire.concat(hero);
-    this.setState({dire: newDire}, this.getWinPercentage)
+    this.setState({dire: newDire}, this.getWinPercentage && this.getTopPicksRadiant(newDire))
+     
   }
   
   // remove hero selection handler
@@ -167,12 +193,86 @@ class App extends Component {
     let newState = bans.filter(bansList => bansList.id !== hero.id);
     this.setState({bans: newState})
   }
+/*
+  getTopPicksRadiant = (dire) => {
+    let topMatchups = [];
+    let topPicks = [];
+    let radiantTopPicks = this.state.radiantTopPicks;
+    if (dire.length === 0) {
+      console.log("Dire team is empty")
+    } else {
+// clear the state
+      this.setState({radiantTopPicks: this.state.radiantTopPicks.filter(x => !x)});
+// iterate over dire team
+      for(let i=0; i < dire.length; i++){
+// grab top picks vs the current dire team
+        fetch(`api/heroes/${dire[i].hero_id}/picks/top`)
+        .then(res => res.json())
+// translate matchup_id to hero name for each of the picks
+        .then(picks => { 
+          picks.forEach(pick => topMatchups.push(pick));
+          topMatchups.forEach(matchup => {
+            fetch(`api/heroes/${matchup.matchup_id}`)
+            .then(res => res.json())
+            .then(hero => this.setState({radiantTopPicks: [...this.state.radiantTopPicks, hero[0].localized_name]}))
+            .catch(err => console.log(err));
+          });
+         
+        });
+      }
+  
+    }
+    console.log(topPicks);
+  }
+*/
+  getTopPicksRadiant = (dire) => {
+    let topPicks = [];
+    let radiantTopPicks = this.state.radiantTopPicks;
+
+    if (dire.length === 0) {
+      console.log("Dire team is empty")
+    } else {
+
+// clear the state
+      this.setState({radiantTopPicks: this.state.radiantTopPicks.filter(x => !x)});
+
+      const getMatchupId = (dire) => { 
+// iterate over dire team
+        for(let i=0; i < dire.length; i++){
+
+        let topMatchups = [];
+// grab top picks vs the current dire team
+          fetch(`api/heroes/${dire[i].hero_id}/picks/top`)
+          .then(res => res.json())
+// translate matchup_id to hero name for each of the picks
+          .then(picks => { picks.forEach(pick => topMatchups.push(pick))})
+          .then(() => topMatchups.forEach(matchup => getHeroId(matchup.matchup_id)))
+          .then(() => setRadiantPicks())
+          .catch(err => console.log(err))
+        };
+      };
+      
+      const getHeroId = (heroId) => {
+        fetch(`api/heroes/${heroId}`)
+        .then(res => res.json())
+        .then(hero => topPicks.push(hero[0].localized_name))
+        .catch(err => console.log(err));
+      };
+    
+      const setRadiantPicks = () => {
+        this.setState({radiantTopPicks: topPicks}, () => console.log(this.state.radiantTopPicks));
+      };   
+
+      getMatchupId(dire);
+    } 
+  }
 
   render() {
     return (
       <div> 
-        <WinCalc radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getPoints = {this.getPoints}/>
+        <WinCalc direPoints = {this.state.direPoints} radiantPoints = {this.state.radiantPoints} radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getPoints = {this.getPoints}/>
         <Teams getWinPercentage = {this.getWinPercentage} removeHeroBans = {this.removeHeroBans} removeHeroDire = {this.removeHeroDire} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
+        <Picks getTopPicksRadiant={this.getTopPicksRadiant} radiantTopPicks={this.state.radiantTopPicks} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire}/>
         <HeroesList getWinPercentage = {this.getWinPercentage} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
       </div>
    );

@@ -56,7 +56,6 @@ class HeroesList extends Component {
                return(
                   <li key={hero.id}>
                     <p>{hero.localized_name}</p>
-                    <img src={hero.image} alt="hero"/>
                     {this.toggleRadiantButton(hero)}
                     {this.toggleDireButton(hero)}
                     {this.toggleBansButton(hero)}                     

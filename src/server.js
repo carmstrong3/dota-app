@@ -29,6 +29,38 @@ app.get('/api/heroes', (req,res) => {
   });
 });
 
+// api endpoint to pull up a specific hero by their id
+app.get(`/api/heroes/:id`, (req, res) => {
+  heroQueries.getHero(req.params.id, (err, hero) => {
+    if(err){
+      console.log(err);
+    } else {
+      res.send(hero);
+    }
+  });
+}); 
+
+
+
+/* pseudocode for getting top per role
+  init roles
+  call topPicks
+  For JSON returned..
+    PER role
+      init counter
+      call getHero 
+      IF hero has specified role, set role value to hero
+      ELSE counter += 1
+      call getHero recursively until hero with role is found
+    CLOSE
+  RETURN roles objects.
+*/
+
+// api endpoint to give top pick suggestion per role.    
+app.get(`/api/heroes/:id/picks/role`, (req, res) => {
+
+
+});
 // An page to update database 
 app.get('/update/heroes', (req,res) => {
   var heroes = [];
@@ -205,6 +237,56 @@ app.get(`/api/heroes/:id/matchups/:matchupid`, (req,res) => {
 
 
 // END HEROES/{ID}/MATCHUPS/{MATCHUPID} PAGES
+
+// top picks
+app.get (`/api/heroes/:id/picks/top`, (req, res) => {
+  const wilson = (x, n) => {
+    let z = 1.96;
+    let p = x / n;
+    let inner = Math.sqrt((p * (1-p)) / n)
+    let toHundredth = num => {return Math.ceil(num * 1000) / 100};
+    return p - z * inner; 
+  }; 
+  matchupQueries.getHeroMatchups(req.params.id, (err, matchups) => {
+    if(err){
+      console.log(err);
+    } else {
+     let wilsonMatchups = (matchups) => {
+       return matchups.map((matchup) => wilson(matchup.wins, matchup.games_played))};
+     let topPicks = matchups.sort((a, b) => {
+       return (wilson(b.wins, b.games_played)) - (wilson(a.wins, a.games_played))
+     }); 
+     let isStatisticallySignificant = value => { return value.games_played >= 10 && wilson(value.wins, value.games_played) > .5}; 
+     let filteredPicks = topPicks.filter(isStatisticallySignificant); 
+      res.send(filteredPicks)
+    }
+  });
+});
+
+// bottom picks
+app.get (`/api/heroes/:id/picks/bottom`, (req, res) => {
+  const wilson = (x, n) => {
+    let z = 1.96;
+    let p = x / n;
+    let inner = Math.sqrt((p * (1-p)) / n)
+    let toHundredth = num => {return Math.ceil(num * 1000) / 100};
+    return p + z * inner; 
+  }; 
+  matchupQueries.getHeroMatchups(req.params.id, (err, matchups) => {
+    if(err){
+      console.log(err);
+    } else {
+     let wilsonMatchups = (matchups) => {
+       return matchups.map((matchup) => wilson(matchup.wins, matchup.games_played))};
+     let topPicks = matchups.sort((a, b) => {
+       return (wilson(a.wins, a.games_played)) - (wilson(b.wins, b.games_played))
+     }); 
+     let isStatisticallySignificant = value => { return value.games_played >= 10 && wilson(value.wins, value.games_played) < .5}; 
+     let filteredPicks = topPicks.filter(isStatisticallySignificant); 
+      res.send(filteredPicks)
+    }
+  });
+});
 
 
 // Handles any requests that don't match the ones above
