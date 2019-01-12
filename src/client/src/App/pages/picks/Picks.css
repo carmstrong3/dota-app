@@ -1,0 +1,12 @@
+.Picks {
+  display: flex;
+  flex-direction: row;
+}
+
+.BestPicks {
+  order: 1;
+}
+
+.WorstPicks {
+  order: 2;
+}

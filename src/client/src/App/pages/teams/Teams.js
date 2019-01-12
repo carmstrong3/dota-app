@@ -4,48 +4,97 @@ class Teams extends Component {
 
   toggleBansButton(hero) {
     return this.props.bans.indexOf(hero) !== -1
-      ? (<button type="button" onClick={(e) => this.props.removeHeroBans(hero)}>Remove Ban</button>)
+      ? (<button type="button" onClick={(e) => this.props.removeHeroBans(hero)}>Remove</button>)
       : (<button type="button" onClick={(e) => this.props.addHeroBans(hero)}>Bans</button>)
   }
+
+  toggleTeamsButton() {
+    return this.props.isRadiant
+      ? (<button type="button" onClick={(e) => this.props.setDire()}>Radiant</button>)
+      : (<button type="button" onClick={(e) => this.props.setRadiant()}>Dire</button>)
+  }
+
+
+
+  toggleWinrateContainer() {
+    const roundHundredth = (num) => {
+      return Math.ceil(num * 10000) / 100;
+    }
+
+    if(this.props.isRadiant) {
+      return (
+        <div className="RadiantWinrateContainer">
+          <button type="button" onClick={() => this.props.getPointsRadiant(this.props.radiantWinrate)}>Get Radiant Winrate</button>
+{/* eslint-disable-next-line */}
+          {this.props.radiantWinrate != 0 ? (
+            <div>
+            {roundHundredth(this.props.radiantPoints)} 
+            </div>
+          ) : (
+            <div>
+            <p>no calculation yet</p>
+            </div>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <div className="DireWinrateContainer">
+          <button type="button" onClick={() => this.props.getPointsDire(this.props.direWinrate)}>Get Dire Winrate</button>
+{/* eslint-disable-next-line*/}
+          {this.props.direWinrate != 0 ? (
+            <div>
+            {roundHundredth(this.props.direPoints)}
+            </div>
+          ) : (
+            <div>
+            <p>no calculation yet</p>
+            </div>
+          )}
+        </div>
+      )
+    }
+  }  
+
+
 
  
   render() {
     
     return (
-      <div className="App">
         <div id="teams container">
           <div id="radiant">
             <h2>Radiant</h2>
             {this.props.radiant ? (
-              <div>
+              <div id="radiantTeamMap">
               {this.props.radiant.map((hero) => {
                 return(
-	          <div key={hero.id}>
+	                <div key={hero.id}>
                     <p>{hero.localized_name}</p>
-                    <img src={hero.image} alt="radiant hero"/>
-                    
-		  </div>
+                    <button type="button" onClick={(e) => this.props.removeHeroRadiant(hero)}>Remove</button>          
+		              </div>
                 );
-	      })}
-	      </div>
+	            })}
+	            </div>
             ) : (
               <div>
                 <p>No hero selected yet</p>
               </div>
             )} 
           </div>
-        <div id="win">
-           
-        </div>
+        <div className="WinCalc-Container">
+          {this.toggleTeamsButton()}
+          {this.toggleWinrateContainer()}     
+        </div>         
         <div id="dire">
           <h2>Dire</h2>
             {this.props.dire ? (
-              <div>
+              <div id="direTeamMap">
               {this.props.dire.map((hero) => {
                 return(
 	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
-                    <img src={hero.image} alt="dire hero"/>
+                    <button type="button" onClick={(e) => this.props.removeHeroDire(hero)}>Remove</button>
 		  </div>
                 );
 	      })}
@@ -64,7 +113,6 @@ class Teams extends Component {
                 return(
 	          <div key={hero.id}>
                     <p>{hero.localized_name}</p>
-                    <img src={hero.image} alt="banned hero"/>
                     {this.toggleBansButton(hero)}
 		  </div>
                 );
@@ -76,7 +124,6 @@ class Teams extends Component {
               </div>
             )} 
         </div>
-      </div>
       </div>
     );
   }

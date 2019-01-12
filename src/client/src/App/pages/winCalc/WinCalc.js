@@ -3,45 +3,54 @@ import React, {Component} from 'react';
 class WinCalc extends Component {
   // Initialize the state
 
+  toggleContainer() {
+    const roundHundredth = (num) => {
+      return Math.ceil(num * 10000) / 100;
+    }
+
+    if(this.props.isRadiant) {
+      return (
+        <div className="RadiantWinrateContainer">
+          <button type="button" onClick={() => this.props.getPointsRadiant(this.props.radiantWinrate)}>Get Radiant Winrate</button>
+{/* eslint-disable-next-line */}
+          {this.props.radiantWinrate != 0 ? (
+            <div>
+            {roundHundredth(this.props.radiantPoints)} 
+            </div>
+          ) : (
+            <div>
+            <p>no calculation yet</p>
+            </div>
+          )}
+        </div>
+      );
+    } else {
+      return (
+        <div className="DireWinrateContainer">
+          <button type="button" onClick={() => this.props.getPointsDire(this.props.direWinrate)}>Get Dire Winrate</button>
+{/* eslint-disable-next-line*/}
+          {this.props.direWinrate != 0 ? (
+            <div>
+            {roundHundredth(this.props.direPoints)}
+            </div>
+          ) : (
+            <div>
+            <p>no calculation yet</p>
+            </div>
+          )}
+        </div>
+      )
+    }
+  }  
+
   render() {
     return(
-      <div className="App">
-        <div className="WinrateContainer">
-          <div className="RadiantWinrateContainer">
-          <h2>Radiant Winrate</h2>
-          {this.props.radiantWinrate ? (
-            <div>
-            <p>winRate is</p>
-            {this.props.radiantPoints}
-            </div>
-          ) : (
-            <div>
-            <p>radiantWinrate length is</p>
-            {this.props.radiantWinrate.length}
-            </div>
-          )}
-          </div>
-          <div className="DireWinrateContainer">
-          <h2>Dire Winrate</h2>
-          {this.props.direWinrate ? (
-            <div>
-            <p>winRate is</p>
-            {this.props.direPoints}
-            </div>
-          ) : (
-            <div>
-            <p>radiantWinrate length is</p>
-            {this.props.direWinrate.length}
-            </div>
-          )}
-          </div>
-
-
-        </div>
-
-
-      </div>
-);
+      <div className="WinCalc-Container">
+        <button type="button" onClick={(e) => this.props.setRadiant()}>I am Radiant</button>
+        {this.toggleContainer()}     
+        <button type="button" onClick={(e) => this.props.setDire()}>I am Dire</button>
+      </div>   
+    );
 
  }
 }

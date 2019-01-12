@@ -30,3 +30,21 @@
     transform: rotate(360deg);
   }
 }
+
+.App {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+.WinCalc-Container {
+  order: 2;
+}
+
+.PicksContainer {
+  order: 4;
+}
+
+.HeroesListContainer {
+  order: 3;
+}

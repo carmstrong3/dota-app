@@ -8,7 +8,7 @@ class HeroesList extends Component {
     let input, filter, ul, li, p, i, txtValue;
     input = document.getElementById('heroesSearchbar');
     filter = input.value.toUpperCase();
-    ul = document.getElementById("unorderedHeroesList");
+    ul = document.getElementById("HeroesList");
     li = ul.getElementsByTagName('li');
 
     // Loop through all list items, and hide those who don't match the search query
@@ -44,13 +44,12 @@ class HeroesList extends Component {
   render() {
 
     return (
-      <div className="App">
-        <div className="HeroesList">
+        <div className="HeroesListContainer">
           <h1>List of Heroes</h1>
           <input type="text" id="heroesSearchbar" onKeyUp={() => this.filterHeroes()} placeholder="Enter Hero Name" title="Enter name here"/>
           {/* Check to see if any heroes are found*/}
           {this.props.heroes ? (
-            <ul id="unorderedHeroesList">
+            <ul id="HeroesList">
               {/*Render the list of heroes */}
               {this.props.heroes.map((hero) => {
                return(
@@ -69,7 +68,6 @@ class HeroesList extends Component {
             </div>
           )}
         </div>
-      </div>
     );
   }
 }
