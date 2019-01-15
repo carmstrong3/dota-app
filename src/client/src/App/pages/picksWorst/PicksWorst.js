@@ -94,12 +94,12 @@ class Picks extends Component {
      
     return(
       <div className="Picks">
-        <div id="bestPicks">
+        <div>
           <h2>Best Picks</h2>
           <button type="button" onClick={() => this.props.getBottomPicks(this.props.dire, this.props.radiant)}>Get Best Picks</button>
           {this.toggleContainerBest()}
         </div>
-        <div id="worstPicks">
+        <div>
           <h2>Worst Picks</h2>
           <button type="button" onClick={() => this.props.getTopPicks(this.props.dire, this.props.radiant)}>Get Worst Picks</button>
           {this.toggleContainerWorst()}

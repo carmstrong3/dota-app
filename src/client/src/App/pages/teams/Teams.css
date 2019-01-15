@@ -1,3 +1,13 @@
 .TeamsContainer {
   order: 1
 }
+
+#radiant {
+  padding: 5px;
+  margin: 5px;
+}
+
+.WinCalc-Container {
+  padding: 5px;
+  margin: 10px;
+}

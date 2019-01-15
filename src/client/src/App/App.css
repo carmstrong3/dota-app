@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  background-color: #434137;
+  color: #FEFEFE;
 }
 
 .App-logo {
@@ -32,19 +34,105 @@
 }
 
 .App {
+}
+
+main {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   justify-content: space-evenly;
 }
 
-.WinCalc-Container {
-  order: 2;
+
+.TeamsContainer {
+  order: 1;
 }
 
 .PicksContainer {
-  order: 4;
+  order: 3;
 }
 
 .HeroesListContainer {
-  order: 3;
+  order: 2;
+}
+
+ul {
+  list-style: none;
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+#HeroesListBox {
+  height: 5em;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+#radiantTeam {
+  padding: 1em;
+  margin: 1em;
+  order: 1;
+}
+
+.WinCalc-Container {
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+#direTeam {
+  padding: 1em;
+  margin: 1em;
+  order: 2; 
+}
+
+#bans {
+  padding: 1em;
+  margin: 1em;
+}
+
+.teamToggleButton {
+  margin-bottom: 1em;
+}
+
+.radiantWinrateContainer {
+  margin: 1em;
+}
+
+.direWinrateContainer {
+  margin: 1em;
+}
+
+#teams {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.teamMember {
+  margin: 1em;
+}
+
+.teamMember p {
+  margin-bottom: .5em;
+  padding: 0px;
+}
+
+.Picks {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+#bestPicks {
+  margin-right: 1em;
+  order: 1;
+}
+
+#worstPicks {
+  margin-left: 1em;
+  order: 2;
 }

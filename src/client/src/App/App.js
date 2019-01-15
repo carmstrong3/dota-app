@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 import './App.css';
 import HeroesList from './pages/heroesList/HeroesList';
 import Teams from './pages/teams/Teams';
@@ -392,7 +393,13 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App"> 
+      <div className="App">
+        <header>
+          <nav id='header'>
+            <h1>Dota App</h1>
+          </nav> 
+        </header>
+        <main>
         <div className="TeamsContainer">
         <Teams setRadiant={this.setRadiant} setDire={this.setDire} isRadiant={this.state.isRadiant} getPointsDire={this.getPointsDire} getPointsRadiant = {this.getPointsRadiant} direPoints = {this.state.direPoints} radiantPoints = {this.state.radiantPoints} radiantWinrate = {this.state.radiantWinrate} direWinrate = {this.state.direWinrate} showRadiantWinrate = {this.showRadiantWinrate} getPoints = {this.getPoints} getWinPercentage = {this.getWinPercentage} removeHeroBans = {this.removeHeroBans} removeHeroDire = {this.removeHeroDire} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
         </div> 
@@ -402,9 +409,12 @@ class App extends Component {
         <div className="HeroesListContainer">
           <HeroesList getWinPercentage = {this.getWinPercentage} addHeroRadiant = {this.addHeroRadiant} removeHeroRadiant = {this.removeHeroRadiant} addHeroDire = {this.addHeroDire} removeHeroDire = {this.removeHeroDire} addHeroBans = {this.addHeroBans} removeHeroBans = {this.removeHeroBans} heroes={this.state.heroes} radiant={this.state.radiant} dire={this.state.dire} bans={this.state.bans}/>
         </div>
+        </main>
+        <footer>
+          <p>Last updated 1.14.19</p> 
+        </footer>
       </div>
-   );
-    
+   ); 
   }
 }
 

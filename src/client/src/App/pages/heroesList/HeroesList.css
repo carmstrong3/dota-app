@@ -2,10 +2,12 @@
   order: 3;
 }
 
-ul {
+#HeroesList{
+  list-style-type: none;
   list-style: none;
 }
 
-li {
+ul {
   list-style: none;
+  list-style-type: none;
 }

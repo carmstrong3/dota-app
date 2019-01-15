@@ -10,8 +10,8 @@ class Teams extends Component {
 
   toggleTeamsButton() {
     return this.props.isRadiant
-      ? (<button type="button" onClick={(e) => this.props.setDire()}>Radiant</button>)
-      : (<button type="button" onClick={(e) => this.props.setRadiant()}>Dire</button>)
+      ? (<button type="button" className="teamToggleButton" onClick={(e) => this.props.setDire()}>Radiant</button>)
+      : (<button type="button" className="teamToggleButton" onClick={(e) => this.props.setRadiant()}>Dire</button>)
   }
 
 
@@ -62,14 +62,21 @@ class Teams extends Component {
   render() {
     
     return (
-        <div id="teams container">
-          <div id="radiant">
+        <div id="teamsContainer">
+          <div className="WinCalc-Container">
+            <h2>Set your team</h2>
+            {this.toggleTeamsButton()}
+            <h3>Check your current odds</h3>
+            {this.toggleWinrateContainer()}     
+          </div>         
+          <div id="teams"> 
+          <div id="radiantTeam">
             <h2>Radiant</h2>
             {this.props.radiant ? (
               <div id="radiantTeamMap">
               {this.props.radiant.map((hero) => {
                 return(
-	                <div key={hero.id}>
+	                <div key={hero.id} className="teamMember">
                     <p>{hero.localized_name}</p>
                     <button type="button" onClick={(e) => this.props.removeHeroRadiant(hero)}>Remove</button>          
 		              </div>
@@ -82,17 +89,13 @@ class Teams extends Component {
               </div>
             )} 
           </div>
-        <div className="WinCalc-Container">
-          {this.toggleTeamsButton()}
-          {this.toggleWinrateContainer()}     
-        </div>         
-        <div id="dire">
+       <div id="direTeam">
           <h2>Dire</h2>
             {this.props.dire ? (
               <div id="direTeamMap">
               {this.props.dire.map((hero) => {
                 return(
-	          <div key={hero.id}>
+	          <div key={hero.id} className="teamMember">
                     <p>{hero.localized_name}</p>
                     <button type="button" onClick={(e) => this.props.removeHeroDire(hero)}>Remove</button>
 		  </div>
@@ -105,13 +108,14 @@ class Teams extends Component {
               </div>
             )}           
         </div> 
+        </div>
         <div id="bans">
           <h2>Bans</h2>
             {this.props.bans ? (
               <div>
               {this.props.bans.map((hero) => {
                 return(
-	          <div key={hero.id}>
+	          <div key={hero.id} className="teamMember">
                     <p>{hero.localized_name}</p>
                     {this.toggleBansButton(hero)}
 		  </div>

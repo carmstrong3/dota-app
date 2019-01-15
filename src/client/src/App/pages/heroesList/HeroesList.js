@@ -48,6 +48,7 @@ class HeroesList extends Component {
           <h1>List of Heroes</h1>
           <input type="text" id="heroesSearchbar" onKeyUp={() => this.filterHeroes()} placeholder="Enter Hero Name" title="Enter name here"/>
           {/* Check to see if any heroes are found*/}
+          <div id="HeroesListBox">
           {this.props.heroes ? (
             <ul id="HeroesList">
               {/*Render the list of heroes */}
@@ -67,6 +68,7 @@ class HeroesList extends Component {
               <h2>No Heroes Found</h2>
             </div>
           )}
+          </div>
         </div>
     );
   }
