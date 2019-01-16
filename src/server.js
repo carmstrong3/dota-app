@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
-const request = require('request-promise-native');
+const requestpn = require('request-promise-native');
+const request = require('request');
 const EventEmitter = require('events').EventEmitter;
 const app = express();
 const heroQueries = require("./db/queries.heroes.js");
@@ -74,7 +75,7 @@ app.get('/update/heroes', (req,res) => {
   
   res.send("updating");
   
-  request('https://api.opendota.com/api/heroes', (err, res, body) => {
+  requestpn('https://api.opendota.com/api/heroes', (err, res, body) => {
     if (!err && res.statusCode == 200) {
       var data = JSON.parse(body);
       for(let i=0; i< data.length; i++){
@@ -111,7 +112,7 @@ app.get(`/update/matchups/:id`, (req,res) => {
 
 // recursive function
   const getMatchups = (id) => {
-    return request(`https://api.opendota.com/api/heroes/${id}/matchups`, (err, res, body) => {
+    return requestpn(`https://api.opendota.com/api/heroes/${id}/matchups`, (err, res, body) => {
       if (!err && res.statusCode == 200) {
         let data = JSON.parse(body);
         let matchups = [];
@@ -162,7 +163,7 @@ app.get('/update/items/1', (req,res) => {
   for(let i=10; i < 11; i++){
     var timings = [];
 // Request the itemTiming page for each hero by page #.      
-    request(`https://api.opendota.com/api/scenarios/itemTimings?hero_id=${i}`, (err, res, body) => {
+    requestpn(`https://api.opendota.com/api/scenarios/itemTimings?hero_id=${i}`, (err, res, body) => {
 // Check for no error and statusCode 200
       if (!err && res.statusCode == 200) {
 // Change body object via json.parse and store it in variable named 'data'
