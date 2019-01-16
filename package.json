@@ -5,8 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "export NODE_ENV=test && jasmine",
-    "heroku-postbuild": "npm install && cd src/client && npm install --only=dev && npm install && npm run build"
+    "test": "export NODE_ENV=test && jasmine"
   },
   "keywords": [],
   "author": "",
