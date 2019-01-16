@@ -11,6 +11,13 @@ const itemQueries = require("./db/queries.items.js");
 const port = process.env.PORT || 5000;
 app.listen(port);
 
+
+// resting home
+app.get('/', (req, res) => {
+  res.send("server home page");
+
+});
+
 // An api endpoint that returns a short list of items
 app.get('/api/getList', (req,res) => {
   var list = ["item1", "item2", "item3"];
